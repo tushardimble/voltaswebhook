@@ -44,7 +44,7 @@
     }else if($intent == "Raising Service Request"){
       $mobile_number =   $requestDecode -> queryResult -> parameters -> mobile_number;  
       // If Mobile Number is not blank then check Customer is exist or not in our system by calling Voltas API
-      $msg = "Hi Tushar, we have sent an OTP to your mobile number";
+      $message = "Hi Tushar, we have sent an OTP to your mobile number";
 
       // Send OTP on Mobile Number
       // $curl = curl_init();

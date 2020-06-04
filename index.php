@@ -89,7 +89,7 @@
         // $err = curl_error($curl);
 
         // curl_close($curl);
-        $message = "Hi ".$user_account_info['Account_Name'].", we have sent an OTP to your mobile number";
+        $message = "Hi ".$user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['Account_Name'].", we have sent an OTP to your mobile number";
 
       }else{
         // Account not found

@@ -55,7 +55,7 @@
         CURLOPT_FOLLOWLOCATION => true,
         CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
         CURLOPT_CUSTOMREQUEST => "POST",
-        CURLOPT_POSTFIELDS =>"{\r\n    \"body\": {\r\n        \"Phone Number\": \"1190000005\"\r\n    }\r\n}\r\n",
+        CURLOPT_POSTFIELDS =>"{\r\n    \"body\": {\r\n        \"Phone Number\": \"$mobile_number\"\r\n    }\r\n}\r\n",
         CURLOPT_HTTPHEADER => array(
           "Authorization: Basic Q09OTkVRVDpVSSgzMzAyMzB0",
           "Content-Type: application/json"
@@ -89,7 +89,7 @@
         // $err = curl_error($curl);
 
         // curl_close($curl);
-        $message = "Hi ".$user_account_info['Count_Account'].", we have sent an OTP to your mobile number";
+        $message = "Hi ".$user_account_info['Account_Name'].", we have sent an OTP to your mobile number";
 
       }else{
         // Account not found

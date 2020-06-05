@@ -153,7 +153,6 @@
       $response       = $statement->execute(array($sessionId,$userOTP)); 
 
       $aEventdata['followupEventInput']['name'] = "existingaddress";
-      $aEventdata['followupEventInput']['parameters']['flag'] = '';
       $aEventdata['languageCode'] = "en-US";
       $aBlankDetails = json_encode($aEventdata);
       echo $aBlankDetails;exit;

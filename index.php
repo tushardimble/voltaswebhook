@@ -152,7 +152,7 @@
       $statement      = $conn->prepare($sDeleteOtpsql);
       $response       = $statement->execute(array($sessionId,$userOTP)); 
 
-      $data['followupEventInput']['name'] = "select_address";
+      $data['followupEventInput']['name'] = "existingaddress";
       $data['followupEventInput']['parameters']['flag'] = '';
       $data['languageCode'] = "en-US";
       $aBlankDetails = json_encode($data);

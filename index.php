@@ -1,31 +1,31 @@
 <?php
-	error_reporting(E_ALL);
+  error_reporting(E_ALL);
   date_default_timezone_set('Asia/Calcutta');
 
   // DB Credentials which is hosting on Plesk Server of 66
-  // $servername = "66.45.232.178";
-  // $username   = "voltas";
-  // $password   = "voltas";
-  // $dbname     = "voltas";
-
-  $servername = "localhost";
-  $username   = "root";
-  $password   = "";
+  $servername = "66.45.232.178";
+  $username   = "voltas_webhook";
+  $password   = "voltas_webhook";
   $dbname     = "voltas_webhook";
-  // Connect with Db 
-//   try{
-//     $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
-//     // set the PDO error mode to exception
-//     $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-//     //echo "Connected";exit;
-//   } catch(PDOException $e) {
-//     echo "Connection failed: " . $e->getMessage();
-//   }
 
-	$request    	= file_get_contents('php://input');
+  // $servername = "localhost";
+  // $username   = "root";
+  // $password   = "";
+  // $dbname     = "voltas_webhook";
+  // Connect with Db 
+  try{
+    $conn = new PDO("mysql:host=$servername;dbname=$dbname", $username, $password);
+    // set the PDO error mode to exception
+    $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    //echo "Connected";exit;
+  } catch(PDOException $e) {
+    echo "Connection failed: " . $e->getMessage();
+  }
+
+  $request      = file_get_contents('php://input');
   $requestDecode  = json_decode($request);
   
-  $intent     	= $requestDecode  ->  queryResult ->  intent  ->  displayName;
+  $intent       = $requestDecode  ->  queryResult ->  intent  ->  displayName;
   $userQueryText  = $requestDecode  ->  queryResult ->  queryText;
 
   // Get Session Id
@@ -93,42 +93,44 @@
     $user_account_info = json_decode($aAccountInforesponse,true);
 
     $iCount_Account = $user_account_info['Count_Account'];
-    
+    $iCount_Account = 1;
+    $mobile_number = "9579123744";
+    $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['Account_Name']= "Tushar Dimble";
     if($iCount_Account != 0){
 
       //Send OTP on Mobile Number
-      // $otp = rand(1000,9999);
-      // $curl = curl_init();
-      // $url = "http://2factor.in/API/V1/066901d9-a62e-11ea-9fa5-0200cd936042/SMS/".$mobile_number."/".$otp;
-      // curl_setopt_array($curl, array(
-      //   CURLOPT_URL => $url,
-      //   CURLOPT_RETURNTRANSFER => true,
-      //   CURLOPT_ENCODING => "",
-      //   CURLOPT_MAXREDIRS => 10,
-      //   CURLOPT_TIMEOUT => 0,
-      //   CURLOPT_FOLLOWLOCATION => true,
-      //   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-      //   CURLOPT_CUSTOMREQUEST => "POST",
-      // ));
+      $otp = rand(1000,9999);
+      $curl = curl_init();
+      $url = "http://2factor.in/API/V1/066901d9-a62e-11ea-9fa5-0200cd936042/SMS/".$mobile_number."/".$otp;
+      curl_setopt_array($curl, array(
+        CURLOPT_URL => $url,
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_ENCODING => "",
+        CURLOPT_MAXREDIRS => 10,
+        CURLOPT_TIMEOUT => 0,
+        CURLOPT_FOLLOWLOCATION => true,
+        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+        CURLOPT_CUSTOMREQUEST => "POST",
+      ));
 
-      // $response = curl_exec($curl);
-      // $err = curl_error($curl);
+      $response = curl_exec($curl);
+      $err = curl_error($curl);
 
-      // curl_close($curl);
-      // // Delete Previous All OTP of that mobile number
-      // $sDeleteOtpsql  = "DELETE FROM otp WHERE mobile_number = ?";        
-      // $statement      = $conn->prepare($sDeleteOtpsql);
-      // $response       = $statement->execute(array($mobile_number)); 
+      curl_close($curl);
+      // Delete Previous All OTP of that mobile number
+      $sDeleteOtpsql  = "DELETE FROM otp WHERE mobile_number = ?";        
+      $statement      = $conn->prepare($sDeleteOtpsql);
+      $response       = $statement->execute(array($mobile_number)); 
 
-      // // Store OTP in DB
-      // $insertotpsql = 'INSERT INTO otp(session_id,mobile_number,otp,otp_date)VALUES (:session_id, :mobile_number, :otp,:otp_date)';
-      // $statement = $conn->prepare($insertotpsql);
-      // $statement->execute([
-      //     'session_id' => $sessionId,
-      //     'mobile_number' => $mobile_number,
-      //     'otp' => $otp,
-      //     'otp_date' => date("Y-m-d")
-      // ]);
+      // Store OTP in DB
+      $insertotpsql = 'INSERT INTO otp(session_id,mobile_number,otp,otp_date)VALUES (:session_id, :mobile_number, :otp,:otp_date)';
+      $statement = $conn->prepare($insertotpsql);
+      $statement->execute([
+          'session_id' => $sessionId,
+          'mobile_number' => $mobile_number,
+          'otp' => $otp,
+          'otp_date' => date("Y-m-d")
+      ]);
  
       $message = "Hi ".$user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['Account_Name'].", we have sent an OTP to your mobile number";
 
@@ -140,20 +142,20 @@
     $userOTP = $requestDecode -> queryResult -> parameters -> OTP;
 
     // Check user entered OTP is correct or not
-    // $checkOTPSql  = "SELECT * FROM otp where session_id='$sessionId' AND otp='$userOTP'";
-    // $data     = $conn->prepare($checkOTPSql);
-    // $data->execute();
-    // $aOTPData = $data->fetchAll();
-    // if(count($aOTPData) > 0){
-    //   // Delete Previous All OTP of that mobile number
-    //   $sDeleteOtpsql  = "DELETE FROM otp WHERE session_id = ? AND otp=?";        
-    //   $statement      = $conn->prepare($sDeleteOtpsql);
-    //   $response       = $statement->execute(array($sessionId,$userOTP)); 
+    $checkOTPSql  = "SELECT * FROM otp where session_id='$sessionId' AND otp='$userOTP'";
+    $data     = $conn->prepare($checkOTPSql);
+    $data->execute();
+    $aOTPData = $data->fetchAll();
+    if(count($aOTPData) > 0){
+      // Delete Previous All OTP of that mobile number
+      $sDeleteOtpsql  = "DELETE FROM otp WHERE session_id = ? AND otp=?";        
+      $statement      = $conn->prepare($sDeleteOtpsql);
+      $response       = $statement->execute(array($sessionId,$userOTP)); 
 
       $message = "You are successfully authenticated.Let us know if you wish to continue with exisitng Address";
-    // }else{
-    //   $message = "Sorry Incorrect OTP.We request you to register your request at 9650694555 or visit https://voltasservice.com for further queries. Thank you";
-    // }
+    }else{
+      $message = "Sorry Incorrect OTP.We request you to register your request at 9650694555 or visit https://voltasservice.com for further queries. Thank you";
+    }
   }
   $data = array (
     'fulfillmentText' => $message

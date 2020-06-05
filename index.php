@@ -152,10 +152,10 @@
       $statement      = $conn->prepare($sDeleteOtpsql);
       $response       = $statement->execute(array($sessionId,$userOTP)); 
 
-      $data['followupEventInput']['name'] = "existingaddress";
-      $data['followupEventInput']['parameters']['flag'] = '';
-      $data['languageCode'] = "en-US";
-      $aBlankDetails = json_encode($data);
+      $aEventdata['followupEventInput']['name'] = "existingaddress";
+      $aEventdata['followupEventInput']['parameters']['flag'] = '';
+      $aEventdata['languageCode'] = "en-US";
+      $aBlankDetails = json_encode($aEventdata);
       echo $aBlankDetails;exit;
     }else{
       $message = "Sorry Incorrect OTP.We request you to register your request at 9650694555 or visit https://voltasservice.com for further queries. Thank you";

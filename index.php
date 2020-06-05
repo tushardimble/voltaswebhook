@@ -153,6 +153,7 @@
       $response       = $statement->execute(array($sessionId,$userOTP)); 
 
       $data['followupEventInput']['name'] = "select_address";
+      $data['followupEventInput']['parameters']['flag'] = '';
       $data['languageCode'] = "en-US";
       $aBlankDetails = json_encode($data);
       echo $aBlankDetails;exit;

@@ -152,7 +152,10 @@
       $statement      = $conn->prepare($sDeleteOtpsql);
       $response       = $statement->execute(array($sessionId,$userOTP)); 
 
-      $message = "You are successfully authenticated.Let us know if you wish to continue with exisitng Address";
+      $data['followupEventInput']['name'] = "select_address";
+      $data['languageCode'] = "en-US";
+      $aBlankDetails = json_encode($data);
+      echo $aBlankDetails;exit;
     }else{
       $message = "Sorry Incorrect OTP.We request you to register your request at 9650694555 or visit https://voltasservice.com for further queries. Thank you";
     }

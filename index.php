@@ -220,6 +220,34 @@
     }else{
       $message = "Invalid Address selection";
     }
+  }else if($intent == "select_product"){
+    // Store product in SR Request Table
+    $selected_product = $requestDecode -> queryResult -> parameters -> selected_product;
+
+    if($selected_product != ""){
+      // Get location Id From Our DB 
+      $getProductSql  = "SELECT * FROM product where  sequence='$selected_product'";
+      $data     = $conn->prepare($getProductSql);
+      $data->execute();
+      $aProductData = $data->fetchAll();
+      $iProductCount = count($aProductData);
+      if($iProductCount != 0){
+        // Update Product name in SR Request Table
+        $product_name = $aProductData[0]['product_name'];
+        $sUpdateProductSql = "Update sr_request SET product_name='$product_name' WHERE session_id= '$sessionId'";
+        //echo $sUpdateProductSql;exit;
+        $data     = $conn->prepare($sUpdateProductSql);
+        $data->execute();
+
+        $aEventdata['followupEventInput']['name'] = "select_sub_type";
+        $aEventdata['followupEventInput']['parameters']['sub_type'] = '';
+        $aEventdata['languageCode'] = "en-US";
+        $aBlankDetails = json_encode($aEventdata);
+        echo $aBlankDetails;exit;
+      }else{
+        $message = "Invalid product selected";
+      }
+    }
   }
   $data = array (
     'fulfillmentText' => $message

@@ -93,35 +93,34 @@
     $user_account_info = json_decode($aAccountInforesponse,true);
 
     $iCount_Account = $user_account_info['Count_Account'];
-    $iCount_Account = 1;
-    $mobile_number = "9579123744";
-    $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['Account_Name']= "Tushar Dimble";
+   
     if($iCount_Account != 0){
 
       //Send OTP on Mobile Number
-      $otp = rand(1000,9999);
-      $curl = curl_init();
-      $url = "http://2factor.in/API/V1/066901d9-a62e-11ea-9fa5-0200cd936042/SMS/".$mobile_number."/".$otp;
-      curl_setopt_array($curl, array(
-        CURLOPT_URL => $url,
-        CURLOPT_RETURNTRANSFER => true,
-        CURLOPT_ENCODING => "",
-        CURLOPT_MAXREDIRS => 10,
-        CURLOPT_TIMEOUT => 0,
-        CURLOPT_FOLLOWLOCATION => true,
-        CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-        CURLOPT_CUSTOMREQUEST => "POST",
-      ));
+      // $otp = rand(1000,9999);
+      // $curl = curl_init();
+      // $url = "http://2factor.in/API/V1/066901d9-a62e-11ea-9fa5-0200cd936042/SMS/".$mobile_number."/".$otp;
+      // curl_setopt_array($curl, array(
+      //   CURLOPT_URL => $url,
+      //   CURLOPT_RETURNTRANSFER => true,
+      //   CURLOPT_ENCODING => "",
+      //   CURLOPT_MAXREDIRS => 10,
+      //   CURLOPT_TIMEOUT => 0,
+      //   CURLOPT_FOLLOWLOCATION => true,
+      //   CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+      //   CURLOPT_CUSTOMREQUEST => "POST",
+      // ));
 
-      $response = curl_exec($curl);
-      $err = curl_error($curl);
+      // $response = curl_exec($curl);
+      // $err = curl_error($curl);
 
-      curl_close($curl);
+      // curl_close($curl);
       // Delete Previous All OTP of that mobile number
       $sDeleteOtpsql  = "DELETE FROM otp WHERE mobile_number = ?";        
       $statement      = $conn->prepare($sDeleteOtpsql);
       $response       = $statement->execute(array($mobile_number)); 
 
+      $otp = 1234;
       // Store OTP in DB
       $insertotpsql = 'INSERT INTO otp(session_id,mobile_number,otp,otp_date)VALUES (:session_id, :mobile_number, :otp,:otp_date)';
       $statement = $conn->prepare($insertotpsql);
@@ -309,7 +308,7 @@
 
       if(count($aSrRequestData) != 0 && count($aUserData) != 0){
         // Call SR Request API
-        $sr_sub_type = $aSrRequestData[0]['sr_type'];
+        $sr_sub_type = $aSrRequestData[0]['sr_sub_type'];
         $product_name = $aSrRequestData[0]['product_name'];
         $location_id = $aSrRequestData[0]['location_id'];
 
@@ -333,10 +332,53 @@
           ),
         ));
 
-        $response = curl_exec($curl);
+        $srresponse = curl_exec($curl);
 
         curl_close($curl);
-        echo $response;
+        $finalSrRequestResponse = json_decode($srresponse,true);
+
+        if($finalSrRequestResponse['Error Message'] != ""){
+          $message = $finalSrRequestResponse['Error Message'];
+        }else{
+          $final_SR_number = $finalSrRequestResponse['Response']['UPBGSRValidateRestAPIBC']['SR Number'];
+          // Store SR Request Data In Our DB
+          $insertRaiseSrRequestsql = 'INSERT INTO raised_sr_request(sr_number,id,sr_type,sr_sub_type,UPBG_Product_Category,account_id,key_account_name,personal_location_id,customer_comment,dealer_id,sr_category,contact_name,contact_mobile,created_datetime)VALUES (:sr_number,:id,:sr_type,:sr_sub_type,:UPBG_Product_Category,:account_id,:key_account_name,:personal_location_id,:customer_comment,:dealer_id,:sr_category,:contact_name,:contact_mobile,:created_datetime)';
+
+          $statement = $conn->prepare($insertRaiseSrRequestsql);
+          $statement->execute([
+              'sr_number'=>$sr_number,
+              'id' => 0,
+              'sr_type' => "Technical",
+              'sr_sub_type' => $sr_sub_type,
+              'UPBG_Product_Category' => $product_name,
+              'account_id' => $account_id,
+              'key_account_name' => $key_account_name,
+              'personal_location_id' => $location_id,
+              'customer_comment' => $customer_comment,
+              'dealer_id' => "1-1VOXML",  // Hard Coded
+              'sr_category' => "Warranty", // Hard Coded
+              'contact_name' => $alternate_name,
+              'contact_mobile' => $alternate_contact,
+              'created_datetime' => date("Y-m-d H:i:s")
+          ]);
+        }
+
+         // Remove our stored data from sr_request table
+        $sDeleteSrRequestsql  = "DELETE FROM sr_request WHERE session_id = ?";        
+        $statement      = $conn->prepare($sDeleteSrRequestsql);
+        $statement->execute(array($sessionId)); 
+
+        // Remove our stored Address from customer_address table
+        $sDeleteaddresssql  = "DELETE FROM customer_address WHERE session_id = ?";        
+        $statement      = $conn->prepare($sDeleteaddresssql);
+        $statement->execute(array($sessionId)); 
+
+        // Remove our User Data from customer_address table
+        $sDeleteUsersql  = "DELETE FROM user_data WHERE session_id = ?";        
+        $statement      = $conn->prepare($sDeleteUsersql);
+        $statement->execute(array($sessionId)); 
+
+        $message = "Your request has been successfully registered with us.Your SR number is " .$sr_number.". Our Representative will contact you shortly. You can expect a little delay due to heavy volumes. Feel free to write to vcare@voltas.com for any other query";
       }
     }else{
       $message = "Something Went Wrong. Please Try Again";

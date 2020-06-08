@@ -136,7 +136,7 @@
       // Store User Data in Our DB
       $account_id = $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['Id'];
       $key_account_name = $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['Account_Sub_Type'];
-      $insertusersql = 'INSERT INTO  user_data(session_id,account_id,key_account_name,created_datetime)VALUES (:session_id, :account_id, :key_account_name,:otp_date)';
+      $insertusersql = 'INSERT INTO  user_data(session_id,account_id,key_account_name,created_datetime)VALUES (:session_id, :account_id, :key_account_name,:created_datetime)';
       $statement = $conn->prepare($insertusersql);
       $statement->execute([
           'session_id' => $sessionId,
@@ -152,7 +152,7 @@
       $i = 1;
       foreach($aAddressArray as $addValue){
         
-          $insertaddresssql = 'INSERT INTO customer_address(sequence,customer_mobile,session_id,address)VALUES (:sequence,:mobile_number,:session_id,:address)';
+          $insertaddresssql = 'INSERT INTO customer_address(sequence,customer_mobile,session_id,address,location_id)VALUES (:sequence,:mobile_number,:session_id,:address,:location_id)';
 
           $statement = $conn->prepare($insertaddresssql);
           $statement->execute([
@@ -290,7 +290,7 @@
       }
     }
   }else if($intent == "create_sr_request"){
-    
+
   }
   $data = array (
     'fulfillmentText' => $message

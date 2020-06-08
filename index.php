@@ -131,7 +131,27 @@
           'otp' => $otp,
           'otp_date' => date("Y-m-d")
       ]);
- 
+      
+      // Store Address in DB against this Session which is get from Account Listing API
+      $aAddressArray = $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['UPBGAddressRestAPIBC'];
+      
+      $i = 1;
+      foreach($aAddressArray as $addValue){
+        
+          $insertaddresssql = 'INSERT INTO customer_address(sequence,customer_mobile,session_id,address)VALUES (:sequence,:mobile_number,:session_id,:address)';
+
+          $statement = $conn->prepare($insertaddresssql);
+          $statement->execute([
+              'sequence' => $i,
+              'mobile_number' => $mobile_number,
+              'session_id' => $sessionId,
+              'address' => $addValue['Address_Name'],
+
+          ]);
+          //echo  $insertaddresssql;
+          $i++;
+      }
+
       $message = "Hi ".$user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['Account_Name'].", we have sent an OTP to your mobile number";
 
     }else{
@@ -159,6 +179,20 @@
     }else{
       $message = "Sorry Incorrect OTP.We request you to register your request at 9650694555 or visit https://voltasservice.com for further queries. Thank you";
     }
+  }else if($intent == "existing address selection or not - yes"){
+    // Get All Address of Customer
+    $getAddressSql  = "SELECT * FROM customer_address where session_id='$sessionId'";
+    $data     = $conn->prepare($getAddressSql);
+    $data->execute();
+    $aAddressData = $data->fetchAll();
+    $iAddressCount = count($aAddressData);
+    if($iAddressCount != 0){
+      $address = "";
+      foreach($aAddressData as $addValue){
+        $address .= $addValue['sequence'].":-".$addValue['address']." ";
+      }
+    }
+    $message = "Please Select Your address: " .$address;
   }
   $data = array (
     'fulfillmentText' => $message

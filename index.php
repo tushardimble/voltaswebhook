@@ -210,7 +210,7 @@
           'session_id' => $sessionId,
           'location_id' => $aLocationIdData[0]['location_id'],
           'sr_type' => "Technical",
-          'otp_date' => date("Y-m-d H:i:s")
+          'sr_request_date' => date("Y-m-d H:i:s")
       ]);
       $aEventdata['followupEventInput']['name'] = "select_product";
       $data['followupEventInput']['parameters']['selected_product'] = '';

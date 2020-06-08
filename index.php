@@ -213,7 +213,7 @@
           'sr_request_date' => date("Y-m-d H:i:s")
       ]);
       $aEventdata['followupEventInput']['name'] = "select_product";
-      $data['followupEventInput']['parameters']['selected_product'] = '';
+      $aEventdata['followupEventInput']['parameters']['selected_product'] = '';
       $aEventdata['languageCode'] = "en-US";
       $aBlankDetails = json_encode($aEventdata);
       echo $aBlankDetails;exit;

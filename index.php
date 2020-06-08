@@ -361,6 +361,7 @@
               'contact_mobile' => $alternate_contact,
               'created_datetime' => date("Y-m-d H:i:s")
           ]);
+          $message = "Your request has been successfully registered with us.Your SR number is " .$sr_number.". Our Representative will contact you shortly. You can expect a little delay due to heavy volumes. Feel free to write to vcare@voltas.com for any other query";
         }
 
          // Remove our stored data from sr_request table
@@ -378,7 +379,7 @@
         $statement      = $conn->prepare($sDeleteUsersql);
         $statement->execute(array($sessionId)); 
 
-        $message = "Your request has been successfully registered with us.Your SR number is " .$sr_number.". Our Representative will contact you shortly. You can expect a little delay due to heavy volumes. Feel free to write to vcare@voltas.com for any other query";
+
       }
     }else{
       $message = "Something Went Wrong. Please Try Again";

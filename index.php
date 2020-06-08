@@ -193,6 +193,33 @@
       }
     }
     $message = "Please Select Your address: " .$address;
+  }else if($intent == "existing address selection or not - yes - select.number"){
+    $selected_address = $requestDecode -> queryResult -> parameters -> address_sequence;
+
+    // Get location Id From Our DB 
+    $getLocationSql  = "SELECT * FROM customer_address where session_id='$sessionId' AND sequence='$selected_address'";
+    $data     = $conn->prepare($getLocationSql);
+    $data->execute();
+    $aLocationIdData = $data->fetchAll();
+    $iLocationCount = count($aLocationIdData);
+    if($iLocationCount != ""){
+      // Insert Location Id In SR Request Table
+      $insertSrRequestsql = 'INSERT INTO sr_request(session_id,location_id,sr_type,sr_request_date)VALUES (:session_id, :location_id, :otp,:otp_date)';
+      $statement = $conn->prepare($insertSrRequestsql);
+      $statement->execute([
+          'session_id' => $sessionId,
+          'location_id' => $aLocationIdData[0]['location_id'],
+          'sr_type' => "Technical",
+          'otp_date' => date("Y-m-d H:i:s")
+      ]);
+      $aEventdata['followupEventInput']['name'] = "select_product";
+      $data['followupEventInput']['parameters']['selected_product'] = '';
+      $aEventdata['languageCode'] = "en-US";
+      $aBlankDetails = json_encode($aEventdata);
+      echo $aBlankDetails;exit;
+    }else{
+      $message = "Invalid Address selection";
+    }
   }
   $data = array (
     'fulfillmentText' => $message

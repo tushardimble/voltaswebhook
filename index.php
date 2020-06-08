@@ -290,7 +290,57 @@
       }
     }
   }else if($intent == "create_sr_request"){
+    $alternate_name = $requestDecode -> queryResult -> parameters -> alternate_name;
+    $alternate_contact = $requestDecode -> queryResult -> parameters -> alternate_contact;
+    $customer_comment = $requestDecode -> queryResult -> parameters -> customer_comment;
 
+    if($alternate_name!= "" && $alternate_contact!= "" && $customer_comment!= ""){
+      //  Get Data From SR Request Table
+      $getSrRequestDataSql  = "SELECT * FROM sr_request where  session_id='$sessionId'";
+      $data     = $conn->prepare($getSrRequestDataSql);
+      $data->execute();
+      $aSrRequestData = $data->fetchAll();
+
+      $getUserDataSql  = "SELECT * FROM  user_data where  session_id='$sessionId'";
+      $data     = $conn->prepare($getUserDataSql);
+      $data->execute();
+      $aUserData = $data->fetchAll();
+      
+
+      if(count($aSrRequestData) != 0 && count($aUserData) != 0){
+        // Call SR Request API
+        $sr_sub_type = $aSrRequestData[0]['sr_type'];
+        $product_name = $aSrRequestData[0]['product_name'];
+        $location_id = $aSrRequestData[0]['location_id'];
+
+        $account_id =  $aUserData[0]['account_id'];
+        $key_account_name = $aUserData[0]['key_account_name'];
+        $curl = curl_init();
+
+        curl_setopt_array($curl, array(
+          CURLOPT_URL => "https://qavcare.voltasworld.com/siebel-rest/v1.0/service/VoltasRestAPISRValidation/ValidateSR",
+          CURLOPT_RETURNTRANSFER => true,
+          CURLOPT_ENCODING => "",
+          CURLOPT_MAXREDIRS => 10,
+          CURLOPT_TIMEOUT => 0,
+          CURLOPT_FOLLOWLOCATION => true,
+          CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+          CURLOPT_CUSTOMREQUEST => "POST",
+          CURLOPT_POSTFIELDS =>"{\r\n    \"body\": {\r\n        \"SiebelMessage\": {\r\n            \"MessageId\": \"\",\r\n            \"MessageType\": \"Integration Object\",\r\n            \"IntObjectName\": \"UPBGSRValRestAPIIO\",\r\n            \"IntObjectFormat\": \"Siebel Hierarchical\",\r\n            \"ListOfUPBGSRValRestAPIIO\": {\r\n                \"UPBGSRValidateRestAPIBC\": {\r\n                    \"Id\": \"0\",\r\n                    \"SR Type\": \"Technical\",\r\n                    \"SR Sub Type\": \"$sr_sub_type\",\r\n                    \"UPBG Product Category\": \"$product_name\",\r\n                    \"Account Id\": \"$account_id\",\r\n                    \"Key Account Name\": \"$key_account_name\",\r\n                    \"Personal Location Id\": \"$location_id\",\r\n                    \"Customer Comments\": \"$customer_comment\",\r\n                    \"Selected SR Routing Dealer Id\": \"1-1VOXML\",\r\n                    \"SR Category\": \"Warranty\",\r\n                    \"External SR\": \"DNAG_VS1005\",\r\n                    \"Contact\": \"$alternate_name\",\r\n                    \"Contact #\": \"$alternate_contact\"\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n",
+          CURLOPT_HTTPHEADER => array(
+            "Authorization: Basic Q09OTkVRVDpVSSgzMzAyMzB0",
+            "Content-Type: application/json"
+          ),
+        ));
+
+        $response = curl_exec($curl);
+
+        curl_close($curl);
+        echo $response;
+      }
+    }else{
+      $message = "Something Went Wrong. Please Try Again";
+    }
   }
   $data = array (
     'fulfillmentText' => $message

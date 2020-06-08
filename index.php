@@ -146,7 +146,7 @@
               'mobile_number' => $mobile_number,
               'session_id' => $sessionId,
               'address' => $addValue['Address_Name'],
-
+              'location_id' => $addValue['Id']
           ]);
           //echo  $insertaddresssql;
           $i++;

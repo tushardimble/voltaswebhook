@@ -202,7 +202,7 @@
     $data->execute();
     $aLocationIdData = $data->fetchAll();
     $iLocationCount = count($aLocationIdData);
-    if($iLocationCount != ""){
+    if($iLocationCount != 0){
       // Insert Location Id In SR Request Table
       $insertSrRequestsql = 'INSERT INTO sr_request(session_id,location_id,sr_type,sr_request_date)VALUES (:session_id, :location_id, :sr_type,:sr_request_date)';
       $statement = $conn->prepare($insertSrRequestsql);

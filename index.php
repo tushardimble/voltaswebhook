@@ -290,30 +290,7 @@
       }
     }
   }else if($intent == "create_sr_request"){
-
     
-    $curl = curl_init();
-
-    curl_setopt_array($curl, array(
-      CURLOPT_URL => "https://qavcare.voltasworld.com/siebel-rest/v1.0/service/VoltasRestAPISRValidation/ValidateSR",
-      CURLOPT_RETURNTRANSFER => true,
-      CURLOPT_ENCODING => "",
-      CURLOPT_MAXREDIRS => 10,
-      CURLOPT_TIMEOUT => 0,
-      CURLOPT_FOLLOWLOCATION => true,
-      CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-      CURLOPT_CUSTOMREQUEST => "POST",
-      CURLOPT_POSTFIELDS =>"{\r\n    \"body\": {\r\n        \"SiebelMessage\": {\r\n            \"MessageId\": \"\",\r\n            \"MessageType\": \"Integration Object\",\r\n            \"IntObjectName\": \"UPBGSRValRestAPIIO\",\r\n            \"IntObjectFormat\": \"Siebel Hierarchical\",\r\n            \"ListOfUPBGSRValRestAPIIO\": {\r\n                \"UPBGSRValidateRestAPIBC\": {\r\n                    \"Id\": \"0\",\r\n                    \"SR Type\": \"Technical\",\r\n                    \"SR Sub Type\": \"Installation\",\r\n                    \"UPBG Product Category\": \"Water Cooler\",\r\n                    \"Account Id\": \"1-16RZT40Q\",\r\n                    \"Key Account Name\": \"General\",\r\n                    \"Personal Location Id\": \"1-16RZT40T\",\r\n                    \"Customer Comments\": \"Postman SR New API User : HTTPS Based API 2020\",\r\n                    \"Selected SR Routing Dealer Id\": \"1-1VOXML\",\r\n                    \"SR Category\": \"Warranty\",\r\n                    \"External SR\": \"DNAG_VS1005\",\r\n                    \"Contact\": \"Vijay Sales DNAG\",\r\n                    \"Contact #\": \"9892924245\"\r\n                }\r\n            }\r\n        }\r\n    }\r\n}\r\n",
-      CURLOPT_HTTPHEADER => array(
-        "Authorization: Basic Q09OTkVRVDpVSSgzMzAyMzB0",
-        "Content-Type: application/json"
-      ),
-    ));
-
-    $response = curl_exec($curl);
-
-    curl_close($curl);
-    echo $response;
   }
   $data = array (
     'fulfillmentText' => $message

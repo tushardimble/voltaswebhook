@@ -1,6 +1,6 @@
 <?php
   error_reporting(E_ALL);
-  set_time_limit(300);
+  ini_set('max_execution_time', 300);
   date_default_timezone_set('Asia/Calcutta');
 
   // DB Credentials which is hosting on Plesk Server of 66

@@ -134,8 +134,14 @@
       
 
       // Store User Data in Our DB
-      $account_id = $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['Id'];
-      $key_account_name = $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['Account_Sub_Type'];
+      if(count($user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']) == 31){
+        $account_id = $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['Id'];
+        $key_account_name = $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['Account_Sub_Type']; 
+      }else{
+        $account_id = $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC'][0]['Id'];
+        $key_account_name = $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC'][0]['Account_Sub_Type'];
+      }
+
       $insertusersql = 'INSERT INTO  user_data(session_id,account_id,key_account_name,created_datetime)VALUES (:session_id, :account_id, :key_account_name,:created_datetime)';
       $statement = $conn->prepare($insertusersql);
       $statement->execute([
@@ -147,7 +153,7 @@
 
 
       // Store Address in DB against this Session which is get from Account Listing API
-      $aAddressArray = $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC']['UPBGAddressRestAPIBC'];
+      $aAddressArray = $user_account_info['SiebelMessage']['UPBGAccountRestAPIBC'][0]['UPBGAddressRestAPIBC'];
       //echo"<pre>";print_r($aAddressArray);
       $custAddressCount = count($aAddressArray);
 

@@ -355,7 +355,7 @@
 
           $statement = $conn->prepare($insertRaiseSrRequestsql);
           $statement->execute([
-              'sr_number'=>$sr_number,
+              'sr_number'=>$final_SR_number,
               'id' => 0,
               'sr_type' => "Technical",
               'sr_sub_type' => $sr_sub_type,
@@ -370,7 +370,7 @@
               'contact_mobile' => $alternate_contact,
               'created_datetime' => date("Y-m-d H:i:s")
           ]);
-          $message = "Your request has been successfully registered with us.Your SR number is " .$sr_number.". Our Representative will contact you shortly. You can expect a little delay due to heavy volumes. Feel free to write to vcare@voltas.com for any other query";
+          $message = "Your request has been successfully registered with us.Your SR number is " .$final_SR_number.". Our Representative will contact you shortly. You can expect a little delay due to heavy volumes. Feel free to write to vcare@voltas.com for any other query";
         }
 
         // Remove our stored data from sr_request table

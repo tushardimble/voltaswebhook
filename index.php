@@ -364,7 +364,7 @@
           $message = "Your request has been successfully registered with us.Your SR number is " .$sr_number.". Our Representative will contact you shortly. You can expect a little delay due to heavy volumes. Feel free to write to vcare@voltas.com for any other query";
         }
 
-         // Remove our stored data from sr_request table
+        // Remove our stored data from sr_request table
         $sDeleteSrRequestsql  = "DELETE FROM sr_request WHERE session_id = ?";        
         $statement      = $conn->prepare($sDeleteSrRequestsql);
         $statement->execute(array($sessionId)); 
@@ -384,6 +384,22 @@
     }else{
       $message = "Something Went Wrong. Please Try Again";
     }
+  }else if($intent == "Default Welcome Intent"){
+    // Remove our stored data from sr_request table
+    $sDeleteSrRequestsql  = "DELETE FROM sr_request WHERE session_id = ?";        
+    $statement      = $conn->prepare($sDeleteSrRequestsql);
+    $statement->execute(array($sessionId)); 
+
+    // Remove our stored Address from customer_address table
+    $sDeleteaddresssql  = "DELETE FROM customer_address WHERE session_id = ?";        
+    $statement      = $conn->prepare($sDeleteaddresssql);
+    $statement->execute(array($sessionId)); 
+
+    // Remove our User Data from customer_address table
+    $sDeleteUsersql  = "DELETE FROM user_data WHERE session_id = ?";        
+    $statement      = $conn->prepare($sDeleteUsersql);
+    $statement->execute(array($sessionId)); 
+
   }
   $data = array (
     'fulfillmentText' => $message

@@ -1,5 +1,5 @@
 <?php
-  error_reporting(0);
+  error_reporting(E_ALL);
   ini_set('max_execution_time', 500);
   date_default_timezone_set('Asia/Calcutta');
 
@@ -414,7 +414,7 @@
           $statement      = $conn->prepare($sDeleteUsersql);
           $statement->execute(array($sessionId)); 
 
-          $message = "Your request has been successfully registered with us. Our Representative will contact you shortly. You can expect a little delay due to heavy volumes. Feel free to write to vcare@voltas.com for any other query";
+          $message = "Your request has been successfully registered with us. Your SR number is ".$final_SR_number.".";
         }
 
       }

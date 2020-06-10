@@ -1,5 +1,5 @@
 <?php
-  error_reporting(0);
+  error_reporting(E_ALL);
   ini_set('max_execution_time', 500);
   date_default_timezone_set('Asia/Calcutta');
 
@@ -371,8 +371,12 @@
           // $sDeleteUsersql  = "DELETE FROM user_data WHERE session_id = ?";        
           // $statement      = $conn->prepare($sDeleteUsersql);
           // $statement->execute(array($sessionId)); 
-
-          $message = $finalSrRequestResponse['Error Message'];
+          if($finalSrRequestResponse['Error Message'] =="SR already booked for this Account today"){
+            $message = $finalSrRequestResponse['Error Message'];
+          }else{
+            $message = "Fail to raised SR Request, Please try again.";
+          }
+          
         }else{
           $final_SR_number = $finalSrRequestResponse['Response']['UPBGSRValidateRestAPIBC']['SR Number'];
           // Store SR Request Data In Our DB
@@ -410,7 +414,7 @@
           // $statement      = $conn->prepare($sDeleteUsersql);
           // $statement->execute(array($sessionId)); 
 
-          $message = "Your request has been successfully registered with us.Your SR number is " .$final_SR_number.". Our Representative will contact you shortly. You can expect a little delay due to heavy volumes. Feel free to write to vcare@voltas.com for any other query";
+          $message = "Your request has been successfully registered with us. Our Representative will contact you shortly. You can expect a little delay due to heavy volumes. Feel free to write to vcare@voltas.com for any other query";
         }
 
         

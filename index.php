@@ -1,6 +1,6 @@
 <?php
   error_reporting(0);
-  ini_set('max_execution_time', 300);
+  ini_set('max_execution_time', 500);
   date_default_timezone_set('Asia/Calcutta');
 
   // DB Credentials which is hosting on Plesk Server of 66
@@ -357,6 +357,21 @@
         $finalSrRequestResponse = json_decode($srresponse,true);
 
         if($finalSrRequestResponse['Error Message'] != ""){
+          // Remove our stored data from sr_request table
+          $sDeleteSrRequestsql  = "DELETE FROM sr_request WHERE session_id = ?";        
+          $statement      = $conn->prepare($sDeleteSrRequestsql);
+          $statement->execute(array($sessionId)); 
+
+          // Remove our stored Address from customer_address table
+          $sDeleteaddresssql  = "DELETE FROM customer_address WHERE session_id = ?";        
+          $statement      = $conn->prepare($sDeleteaddresssql);
+          $statement->execute(array($sessionId)); 
+
+          // Remove our User Data from customer_address table
+          $sDeleteUsersql  = "DELETE FROM user_data WHERE session_id = ?";        
+          $statement      = $conn->prepare($sDeleteUsersql);
+          $statement->execute(array($sessionId)); 
+
           $message = $finalSrRequestResponse['Error Message'];
         }else{
           $final_SR_number = $finalSrRequestResponse['Response']['UPBGSRValidateRestAPIBC']['SR Number'];
@@ -380,23 +395,25 @@
               'contact_mobile' => $alternate_contact,
               'created_datetime' => date("Y-m-d H:i:s")
           ]);
+          // Remove our stored data from sr_request table
+          $sDeleteSrRequestsql  = "DELETE FROM sr_request WHERE session_id = ?";        
+          $statement      = $conn->prepare($sDeleteSrRequestsql);
+          $statement->execute(array($sessionId)); 
+
+          // Remove our stored Address from customer_address table
+          $sDeleteaddresssql  = "DELETE FROM customer_address WHERE session_id = ?";        
+          $statement      = $conn->prepare($sDeleteaddresssql);
+          $statement->execute(array($sessionId)); 
+
+          // Remove our User Data from customer_address table
+          $sDeleteUsersql  = "DELETE FROM user_data WHERE session_id = ?";        
+          $statement      = $conn->prepare($sDeleteUsersql);
+          $statement->execute(array($sessionId)); 
+
           $message = "Your request has been successfully registered with us.Your SR number is " .$final_SR_number.". Our Representative will contact you shortly. You can expect a little delay due to heavy volumes. Feel free to write to vcare@voltas.com for any other query";
         }
 
-        // Remove our stored data from sr_request table
-        $sDeleteSrRequestsql  = "DELETE FROM sr_request WHERE session_id = ?";        
-        $statement      = $conn->prepare($sDeleteSrRequestsql);
-        $statement->execute(array($sessionId)); 
-
-        // Remove our stored Address from customer_address table
-        $sDeleteaddresssql  = "DELETE FROM customer_address WHERE session_id = ?";        
-        $statement      = $conn->prepare($sDeleteaddresssql);
-        $statement->execute(array($sessionId)); 
-
-        // Remove our User Data from customer_address table
-        $sDeleteUsersql  = "DELETE FROM user_data WHERE session_id = ?";        
-        $statement      = $conn->prepare($sDeleteUsersql);
-        $statement->execute(array($sessionId)); 
+        
 
 
       }

@@ -244,6 +244,12 @@
           'sr_type' => "Technical",
           'sr_request_date' => date("Y-m-d H:i:s")
       ]);
+
+      // Remove our stored Address from customer_address table
+      $sDeleteaddresssql  = "DELETE FROM customer_address WHERE session_id = ?";        
+      $statement      = $conn->prepare($sDeleteaddresssql);
+      $statement->execute(array($sessionId)); 
+
       $aEventdata['followupEventInput']['name'] = "select_product";
       $aEventdata['followupEventInput']['parameters']['selected_product'] = '';
       $aEventdata['languageCode'] = "en-US";
@@ -314,12 +320,12 @@
 
     if($alternate_name!= "" && $alternate_contact!= "" && $customer_comment!= ""){
       //  Get Data From SR Request Table
-      $getSrRequestDataSql  = "SELECT * FROM sr_request where  session_id='$sessionId'";
+      $getSrRequestDataSql  = "SELECT sr_sub_type,product_name,location_id FROM sr_request where  session_id='$sessionId'";
       $data     = $conn->prepare($getSrRequestDataSql);
       $data->execute();
       $aSrRequestData = $data->fetchAll();
 
-      $getUserDataSql  = "SELECT * FROM  user_data where  session_id='$sessionId'";
+      $getUserDataSql  = "SELECT account_id,key_account_name FROM  user_data where  session_id='$sessionId'";
       $data     = $conn->prepare($getUserDataSql);
       $data->execute();
       $aUserData = $data->fetchAll();
@@ -360,11 +366,6 @@
           // Remove our stored data from sr_request table
           $sDeleteSrRequestsql  = "DELETE FROM sr_request WHERE session_id = ?";        
           $statement      = $conn->prepare($sDeleteSrRequestsql);
-          $statement->execute(array($sessionId)); 
-
-          // Remove our stored Address from customer_address table
-          $sDeleteaddresssql  = "DELETE FROM customer_address WHERE session_id = ?";        
-          $statement      = $conn->prepare($sDeleteaddresssql);
           $statement->execute(array($sessionId)); 
 
           // Remove our User Data from customer_address table
@@ -409,14 +410,11 @@
           $statement      = $conn->prepare($sDeleteaddresssql);
           $statement->execute(array($sessionId)); 
 
-          // Remove our User Data from customer_address table
-          $sDeleteUsersql  = "DELETE FROM user_data WHERE session_id = ?";        
-          $statement      = $conn->prepare($sDeleteUsersql);
-          $statement->execute(array($sessionId)); 
-
           $message = "Your request has been successfully registered with us. Your SR number is ".$final_SR_number.".";
         }
 
+      }else{
+        $message = "Fail to Raise SR Request";
       }
     }else{
       $message = "Something Went Wrong. Please Try Again";
@@ -437,7 +435,17 @@
     $statement      = $conn->prepare($sDeleteUsersql);
     $statement->execute(array($sessionId)); 
 
+  }else if($intent == "connect_to_agent - yes"){
+    // Check is Agent is Available
+    $sAgentAvailability = "yes";
+    $user_name     = $requestDecode -> queryResult -> parameters -> user_name;
+    if($sAgentAvailability == "yes"){
+      $message = $user_name." You have been connected to an Agent";
+    }else{
+      $message = "Sorry ".$user_name." it seems our agent busy. Can you try after sometime. Thank you for our co-operation";
+    }
   }
+
   $data = array (
     'fulfillmentText' => $message
   );

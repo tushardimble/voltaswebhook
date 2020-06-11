@@ -380,6 +380,9 @@
           
         }else{
           $final_SR_number = $finalSrRequestResponse['Response']['UPBGSRValidateRestAPIBC']['SR Number'];
+
+          $message = "Your request has been successfully registered with us. Your SR number is ".$final_SR_number.".";
+          
           // Store SR Request Data In Our DB
           $insertRaiseSrRequestsql = 'INSERT INTO raised_sr_request(sr_number,id,sr_type,sr_sub_type,UPBG_Product_Category,account_id,key_account_name,personal_location_id,customer_comment,dealer_id,sr_category,contact_name,contact_mobile,created_datetime)VALUES (:sr_number,:id,:sr_type,:sr_sub_type,:UPBG_Product_Category,:account_id,:key_account_name,:personal_location_id,:customer_comment,:dealer_id,:sr_category,:contact_name,:contact_mobile,:created_datetime)';
 
@@ -410,7 +413,6 @@
           $statement      = $conn->prepare($sDeleteaddresssql);
           $statement->execute(array($sessionId)); 
 
-          $message = "Your request has been successfully registered with us. Your SR number is ".$final_SR_number.".";
         }
 
       }else{

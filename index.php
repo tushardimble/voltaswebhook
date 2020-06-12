@@ -221,10 +221,10 @@
     if($iAddressCount != 0){
       $address = "";
       foreach($aAddressData as $addValue){
-        $address .= $addValue['sequence'].":-".$addValue['address']."<br />";
+        $address .= "<b>"$addValue['sequence'].":</b> ".$addValue['address']."<br />";
       }
     }
-    $message = "Please Select Your address: " .$address;
+    $message = "Please Select Your address: (e.g. 1 for first address)" ."<br/>".$address;
   }else if($intent == "existing address selection or not - yes - select.number" || $intent== "existing address selection or not - no"){
 
     if($intent== "existing address selection or not - no"){

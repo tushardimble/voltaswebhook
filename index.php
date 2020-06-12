@@ -221,7 +221,7 @@
     if($iAddressCount != 0){
       $address = "";
       foreach($aAddressData as $addValue){
-        $address .= "<b>"$addValue['sequence'].":</b> ".$addValue['address']."<br />";
+        $address .= "<b>".$addValue['sequence'].":</b> ".$addValue['address']."<br />";
       }
     }
     $message = "Please Select Your address: (e.g. 1 for first address)" ."<br/>".$address;

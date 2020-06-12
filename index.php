@@ -225,8 +225,20 @@
       }
     }
     $message = "Please Select Your address: " .$address;
-  }else if($intent == "existing address selection or not - yes - select.number"){
-    $selected_address = $requestDecode -> queryResult -> parameters -> address_sequence;
+  }else if($intent == "existing address selection or not - yes - select.number" || $intent== "existing address selection or not - no"){
+
+    if($intent== "existing address selection or not - no"){
+      $new_address = $requestDecode -> queryResult -> parameters -> new_address;
+      $new_state = $requestDecode -> queryResult -> parameters -> new_state;
+      $new_pin_code = $requestDecode -> queryResult -> parameters -> new_pin_code;
+      $new_city = $requestDecode -> queryResult -> parameters -> new_city;
+
+      if($new_address != "" && $new_state != "" && $new_pin_code != "" && $new_city != ""){
+        $selected_address = 1;
+      }
+    }else{
+      $selected_address = $requestDecode -> queryResult -> parameters -> address_sequence;
+    }
 
     // Get location Id From Our DB 
     $getLocationSql  = "SELECT * FROM customer_address where session_id='$sessionId' AND sequence='$selected_address'";
@@ -382,7 +394,7 @@
           $final_SR_number = $finalSrRequestResponse['Response']['UPBGSRValidateRestAPIBC']['SR Number'];
 
           $message = "Your request has been successfully registered with us. Your SR number is ".$final_SR_number.".";
-          
+
           // Store SR Request Data In Our DB
           $insertRaiseSrRequestsql = 'INSERT INTO raised_sr_request(sr_number,id,sr_type,sr_sub_type,UPBG_Product_Category,account_id,key_account_name,personal_location_id,customer_comment,dealer_id,sr_category,contact_name,contact_mobile,created_datetime)VALUES (:sr_number,:id,:sr_type,:sr_sub_type,:UPBG_Product_Category,:account_id,:key_account_name,:personal_location_id,:customer_comment,:dealer_id,:sr_category,:contact_name,:contact_mobile,:created_datetime)';
 

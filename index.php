@@ -188,7 +188,7 @@
 
     }else{
       // Account not found
-
+      $message = "Thank you for contacting in Voltas. We request you to Register as a customer with us at https://voltasservice.com";
     }
   }else if($intent == "validate OTP"){
     $userOTP = $requestDecode -> queryResult -> parameters -> OTP;
@@ -221,7 +221,7 @@
     if($iAddressCount != 0){
       $address = "";
       foreach($aAddressData as $addValue){
-        $address .= $addValue['sequence'].":-".$addValue['address']." ";
+        $address .= $addValue['sequence'].":-".$addValue['address']."<br />";
       }
     }
     $message = "Please Select Your address: " .$address;
